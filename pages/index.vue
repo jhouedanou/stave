@@ -123,6 +123,7 @@ async function startQuiz() {
       }
       throw error;
     }
+    useState("participantEmail").value = participant.value.email;
 
     showRegistrationDialog.value = false;
     await navigateTo("/quizz", { replace: true });

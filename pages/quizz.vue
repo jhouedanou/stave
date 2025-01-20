@@ -89,6 +89,7 @@
 
 <script setup>
 import { questions, useTopScores } from "~/composables/useQuestions";
+const participantEmail = useState('participantEmail');
 
 const supabase = useSupabaseClient();
 const config = useRuntimeConfig();
