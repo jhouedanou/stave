@@ -102,7 +102,7 @@ const totalScore = ref(0);
 const isQuizCompleted = ref(false);
 const topScores = ref([]);
 const isCorrectAnswer = ref(false);
-const participantEmail = useState('participantEmail');
+const userEmail = useState('participantEmail');
 
 const minScoreEligible = config.public.minScoreEligible;
 
@@ -162,22 +162,32 @@ const submitAnswer = () => {
 };
 
 const submitFinalScore = async () => {
-  const { error } = await supabase
-    .from("participants")
-    .update({
-      score: totalScore.value,
-      completed_at: new Date().toISOString()
-    })
-    .eq("email", participantEmail.value);
+  try {
+    console.log('Email utilisateur:', userEmail.value);
+    console.log('Score final:', totalScore.value);
 
-  if (!error) {
+    const { data, error } = await supabase
+      .from('participants')
+      .update({
+        score: totalScore.value,
+        completed_at: new Date().toISOString()
+      })
+      .eq('email', userEmail.value)
+      .select();
+
+    if (error) throw error;
+
+    console.log('Score enregistré avec succès:', data);
+    
     const quizCookie = useCookie('quiz-completed', {
-      maxAge: 60 * 60 * 24 * 7 // 7 jours
+      maxAge: 60 * 60 * 24 * 7
     });
     quizCookie.value = 'true';
-   /// alert(`🎉 Félicitations ! Votre score final est de ${totalScore.value} points !`);
-  } else {
-    console.error("Erreur d'enregistrement:", error);
+
+    topScores.value = await useTopScores();
+    
+  } catch (err) {
+    console.error('Erreur lors de l\'enregistrement:', err);
   }
 };
 </script>
