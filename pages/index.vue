@@ -125,7 +125,7 @@ async function startQuiz() {
     }
 
     showRegistrationDialog.value = false;
-    await navigateTo("/quizz", { replace: true });
+    await router.push("/quizz");
   } catch (error) {
     console.error("Erreur:", error);
     errorMessage.value = "Une erreur est survenue lors de l'inscription";
