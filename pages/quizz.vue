@@ -89,7 +89,7 @@
 
 <script setup>
 import { questions, useTopScores } from "~/composables/useQuestions";
-const participantEmail = useState('participantEmail');
+import { useCookie } from '#app';
 
 const supabase = useSupabaseClient();
 const config = useRuntimeConfig();
@@ -102,12 +102,20 @@ const totalScore = ref(0);
 const isQuizCompleted = ref(false);
 const topScores = ref([]);
 const isCorrectAnswer = ref(false);
+const participantEmail = useState('participantEmail');
 
 const minScoreEligible = config.public.minScoreEligible;
 
 const currentQuestion = computed(() => questions[currentQuestionIndex.value] || null);
 
 onMounted(async () => {
+  const quizCookie = useCookie('quiz-completed');
+  
+  if (quizCookie.value) {
+    router.push('/');
+    return;
+  }
+  
   topScores.value = await useTopScores();
 });
 
@@ -163,7 +171,11 @@ const submitFinalScore = async () => {
     .eq("email", participantEmail.value);
 
   if (!error) {
-    alert(`🎉 Félicitations ! Votre score final est de ${totalScore.value} points !`);
+    const quizCookie = useCookie('quiz-completed', {
+      maxAge: 60 * 60 * 24 * 7 // 7 jours
+    });
+    quizCookie.value = 'true';
+   /// alert(`🎉 Félicitations ! Votre score final est de ${totalScore.value} points !`);
   } else {
     console.error("Erreur d'enregistrement:", error);
   }

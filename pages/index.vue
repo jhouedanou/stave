@@ -1,243 +1,183 @@
 <template>
-  <v-container>
-    <section class="text-center">
-      <div v-if="!isQuizCompleted">
-        <v-card class="pa-6 quiz-card" elevation="4">
-          <h2 class="romantic-title mb-4">
-            Question {{ currentQuestionIndex + 1 }}/{{ questions.length }}
-          </h2>
-          <p class="romantic-subtitle mb-6">{{ currentQuestion.question }}</p>
-
-          <v-radio-group v-model="selectedAnswer" class="mb-6">
-            <v-radio
-              v-for="option in ['A', 'B', 'C']"
-              :key="option"
-              :value="option"
-              :label="getOptionText(option)"
-              :disabled="answerSubmitted"
-              :color="getAnswerColor(option)"
-              class="text-left mb-2"
-            ></v-radio>
-          </v-radio-group>
-
-          <v-alert
-            v-if="answerSubmitted"
-            :type="isCorrectAnswer ? 'success' : 'error'"
-            class="mb-4"
-          >
-            {{ isCorrectAnswer ? '✨ Bravo ! Bonne réponse !' : '❌ Dommage, ce n\'était pas la bonne réponse.' }}
-          </v-alert>
-
-          <v-btn
-            color="primary"
-            size="x-large"
-            elevation="4"
-            class="px-8 py-3 mt-4 romantic-button"
-            rounded
-            @click="submitAnswer"
-            :disabled="!selectedAnswer"
-          >
-            <v-icon left class="mr-2">mdi-heart</v-icon>
-            {{ answerSubmitted ? "Question suivante" : "Valider" }}
-          </v-btn>
-        </v-card>
+  <div>
+    <div v-if="isLoading" class="loading-screen">
+      <div class="hearts-container">
+        <span
+          v-for="n in 5"
+          :key="n"
+          class="heart"
+          :style="{ animationDelay: `${n * 0.3}s` }"
+          >❤️</span
+        >
       </div>
+      <p class="loading-text">Chargement...</p>
+    </div>
+    <v-container class="text-center">
+      <h1 class="romantic-title mb-6">Quiz Saint-Valentin</h1>
 
-      <div v-else>
-        <v-card class="pa-6 result-card" elevation="4">
-          <h2 class="romantic-title">Quiz terminé !</h2>
-          <p class="romantic-subtitle mb-4">
-            Votre score : {{ totalScore }}/13 points
-          </p>
+      <v-btn
+        color="primary"
+        size="x-large"
+        :disabled="isAfterDeadline"
+        @click="showRegistrationDialog = true"
+        class="px-8 py-3"
+      >
+        <v-icon left>mdi-heart</v-icon>
+        Commencer le Quiz
+      </v-btn>
 
-          <div v-if="totalScore >= minScoreEligible">
-            <v-alert type="success" variant="tonal" class="mb-4">
-              Félicitations ! Vous êtes éligible au tirage au sort.
+      <v-dialog v-model="showRegistrationDialog" persistent max-width="500">
+        <v-card>
+          <v-card-title class="romantic-subtitle">
+            Inscription au Quiz
+          </v-card-title>
+
+          <v-card-text>
+            <v-alert v-if="errorMessage" type="error" class="mb-4" closable>
+              {{ errorMessage }}
             </v-alert>
-          </div>
-          <div v-else>
-            <v-alert type="error" variant="tonal">
-              Désolé, vous devez obtenir au moins {{ minScoreEligible }} points
-              pour être éligible au tirage au sort.
-            </v-alert>
-          </div>
-        </v-card>
 
-        <v-card class="mt-6 scores-card" elevation="4">
-          <v-card-title class="romantic-title">Top 10 des meilleurs scores</v-card-title>
-          <v-table>
-            <thead>
-              <tr>
-                <th class="text-center">Position</th>
-                <th>Nom</th>
-                <th class="text-center">Score</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(score, index) in topScores" :key="index">
-                <td class="text-center">{{ index + 1 }}</td>
-                <td>{{ score.name }}</td>
-                <td class="text-center">{{ score.score }}/13</td>
-              </tr>
-            </tbody>
-          </v-table>
+            <v-form
+              ref="form"
+              v-model="isFormValid"
+              @submit.prevent="startQuiz"
+            >
+              <v-text-field
+                v-model="participant.name"
+                label="Votre nom"
+                :rules="nameRules"
+                required
+                variant="outlined"
+              ></v-text-field>
+
+              <v-text-field
+                v-model="participant.email"
+                label="Votre email"
+                type="email"
+                :rules="emailRules"
+                required
+                variant="outlined"
+              ></v-text-field>
+            </v-form>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="startQuiz" :disabled="!isFormValid">
+              Commencer
+            </v-btn>
+          </v-card-actions>
         </v-card>
-      </div>
-    </section>
-  </v-container>
+      </v-dialog>
+    </v-container>
+  </div>
 </template>
 
 <script setup>
-import { questions, useTopScores } from "~/composables/useQuestions";
-import { useCookie } from '#app';
-
-const supabase = useSupabaseClient();
 const config = useRuntimeConfig();
 const router = useRouter();
+const isLoading = ref(true);
 
-const currentQuestionIndex = ref(0);
-const selectedAnswer = ref(null);
-const answerSubmitted = ref(false);
-const totalScore = ref(0);
-const isQuizCompleted = ref(false);
-const topScores = ref([]);
-const isCorrectAnswer = ref(false);
-const participantEmail = useState('participantEmail');
+const showRegistrationDialog = ref(false);
+const isFormValid = ref(false);
+const form = ref(null);
+const errorMessage = ref("");
 
-const minScoreEligible = config.public.minScoreEligible;
-
-const currentQuestion = computed(() => questions[currentQuestionIndex.value] || null);
-
-onMounted(async () => {
-  const quizCookie = useCookie('quiz-completed');
-  
-  if (quizCookie.value) {
-    router.push('/');
-    return;
-  }
-  
-  topScores.value = await useTopScores();
+const participant = ref({
+  name: "",
+  email: "",
 });
 
-const getOptionText = (option) => {
-  switch (option) {
-    case "A": return currentQuestion.value.option_a;
-    case "B": return currentQuestion.value.option_b;
-    case "C": return currentQuestion.value.option_c;
-    default: return "";
-  }
-};
+const nameRules = [
+  (v) => !!v || "Le nom est requis",
+  (v) => v.length >= 2 || "Le nom doit contenir au moins 2 caractères",
+];
 
-const getAnswerColor = (option) => {
-  if (!answerSubmitted.value) return 'primary';
-  if (option === currentQuestion.value.correct_answer) return 'success';
-  if (option === selectedAnswer.value) return 'error';
-  return 'primary';
-};
+const emailRules = [
+  (v) => !!v || "L'email est requis",
+  (v) => /.+@.+\..+/.test(v) || "L'email doit être valide",
+];
 
-const submitAnswer = () => {
-  if (!answerSubmitted.value) {
-    isCorrectAnswer.value = selectedAnswer.value === currentQuestion.value.correct_answer;
-    if (isCorrectAnswer.value) {
-      totalScore.value += currentQuestion.value.points;
-      console.log("🎯 Bonne réponse! Score actuel:", totalScore.value);
-    } else {
-      console.log("❌ Mauvaise réponse. Score actuel:", totalScore.value);
+const isAfterDeadline = computed(() => {
+  const deadline = new Date(config.public.deadline);
+  return new Date() > deadline;
+});
+
+async function startQuiz() {
+  if (!isFormValid.value) return;
+  errorMessage.value = "";
+
+  try {
+    const { data, error } = await useSupabaseClient()
+      .from("participants")
+      .insert({
+        name: participant.value.name,
+        email: participant.value.email,
+        started_at: new Date().toISOString(),
+      });
+
+    if (error) {
+      if (error.code === "23505") {
+        errorMessage.value = "Vous avez déjà participé au quiz avec cet email";
+        return;
+      }
+      throw error;
     }
-    answerSubmitted.value = true;
 
-    if (currentQuestionIndex.value + 1 >= questions.length) {
-      submitFinalScore();
-    }
-  } else {
-    currentQuestionIndex.value++;
-    selectedAnswer.value = null;
-    answerSubmitted.value = false;
-    isCorrectAnswer.value = false;
-
-    if (currentQuestionIndex.value >= questions.length) {
-      isQuizCompleted.value = true;
-    }
+    showRegistrationDialog.value = false;
+    await navigateTo("/quizz", { replace: true });
+  } catch (error) {
+    console.error("Erreur:", error);
+    errorMessage.value = "Une erreur est survenue lors de l'inscription";
   }
-};
+}
 
-const submitFinalScore = async () => {
-  const { error } = await supabase
-    .from("participants")
-    .update({
-      score: totalScore.value,
-      completed_at: new Date().toISOString()
-    })
-    .eq("email", participantEmail.value);
-
-  if (!error) {
-    const quizCookie = useCookie('quiz-completed', {
-      maxAge: 60 * 60 * 24 * 7 // 7 jours
-    });
-    quizCookie.value = 'true';
-   /// alert(`🎉 Félicitations ! Votre score final est de ${totalScore.value} points !`);
-  } else {
-    console.error("Erreur d'enregistrement:", error);
-  }
-};
+onMounted(() => {
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 2000);
+});
 </script>
 
 <style scoped>
-.romantic-title {
-  font-family: var(--font-title);
-  font-size: 2.5rem;
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #ffe6f0, #fff0f5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.hearts-container {
+  display: flex;
+  gap: 20px;
+}
+
+.heart {
+  font-size: 3rem;
+  animation: float 2s ease-in-out infinite;
+}
+
+.loading-text {
+  margin-top: 20px;
+  font-family: var(--font-subtitle);
   color: #ff1d8e;
-  margin-bottom: 1rem;
+  font-size: 1.5rem;
 }
 
-.romantic-subtitle {
-  font-family: var(--font-subtitle);
-  font-size: 1.8rem;
-  color: #ff8fb1;
-}
-
-.romantic-button {
-  background: linear-gradient(45deg, #ff1d8e, #ff69b4) !important;
-  font-size: 1.2rem;
-  font-family: var(--font-subtitle);
-  text-transform: none;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-}
-
-.romantic-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 15px rgba(255, 29, 142, 0.3) !important;
-}
-
-.quiz-card,
-.result-card,
-.scores-card {
-  border-radius: 20px;
-  background: linear-gradient(145deg, #ffffff, #fff0f3);
-  box-shadow: 0 8px 20px rgba(255, 105, 180, 0.1) !important;
-}
-
-.v-table {
-  background: transparent !important;
-}
-
-.v-table th {
-  color: #ff1d8e !important;
-  font-family: var(--font-subtitle);
-  font-size: 1.2rem;
-}
-
-.v-table td {
-  font-family: var(--font-body);
-  color: #666;
-}
-
-.v-radio.success .v-label {
-  color: #4CAF50 !important;
-}
-
-.v-radio.error .v-label {
-  color: #FF5252 !important;
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 </style>
