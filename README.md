@@ -1,12 +1,31 @@
-# Nuxt Minimal Starter
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+# Questionnaire Interactif
 
-## Setup
 
-Make sure to install dependencies:
+## Description
+Une application de questionnaire interactive permettant aux utilisateurs de répondre à une série de questions et d'obtenir leurs résultats immédiatement.
 
-```bash
+
+## Fonctionnalités
+- Interface utilisateur intuitive
+- Questions à choix multiples
+- Calcul automatique des scores
+- Affichage des résultats détaillés
+- Sauvegarde des réponses
+
+
+## Installation
+1. Clonez le dépôt
+
+
+git clone https://github.com/votre-nom/questionnaire.git
+
+
+## Configuration
+
+Assurez-vous d'installer les dépendances :
+
+
 # npm
 npm install
 
@@ -18,13 +37,17 @@ yarn install
 
 # bun
 bun install
-```
 
-## Development Server
 
-Start the development server on `http://localhost:3000`:
 
-```bash
+
+
+## Serveur de développement
+
+
+Démarrez le serveur de développement sur `http://localhost:3000` :
+
+
 # npm
 npm run dev
 
@@ -36,13 +59,16 @@ yarn dev
 
 # bun
 bun run dev
-```
+
+
 
 ## Production
 
-Build the application for production:
 
-```bash
+Construisez l'application pour la production :
+
+
+
 # npm
 npm run build
 
@@ -54,11 +80,14 @@ yarn build
 
 # bun
 bun run build
-```
 
-Locally preview production build:
 
-```bash
+
+
+
+Prévisualisez localement la version de production :
+
+
 # npm
 npm run preview
 
@@ -70,6 +99,8 @@ yarn preview
 
 # bun
 bun run preview
-```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+
+
+Consultez la [documentation de déploiement](https://nuxt.com/docs/getting-started/deployment) pour plus d'informations.
