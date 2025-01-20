@@ -92,3 +92,25 @@
   border-top: 2px solid rgba(255, 29, 142, 0.1);
 }
 </style>
+
+<script setup>
+useHead({
+  title: "Quiz Saint-Valentin",
+  meta: [
+    { property: "og:title", content: "Quiz Saint-Valentin 2024" },
+    {
+      property: "og:description",
+      content:
+        "Participez à notre quiz spécial Saint-Valentin et tentez de gagner de superbes cadeaux !",
+    },
+    { property: "og:image", content: "/images/miniature.jpg" },
+    { property: "og:url", content: "https://votre-url.com" },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+    {
+      name: "description",
+      content: "Quiz Saint-Valentin avec de nombreux lots à gagner",
+    },
+  ],
+});
+</script>
