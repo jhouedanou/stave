@@ -1,23 +1,38 @@
 <script setup>
 useHead({
-  title: "le Quiz de L'AMOUR ",
+  title: "Quiz Saint-Valentin 2024",
   meta: [
-    { property: "og:title", content: "Quiz Saint-Valentin 2024" },
-
+    // Description générale
     {
-      property: "og:image",
-      content: "https://quizzstave.netlify.app/images/miniature.jpg",
+      name: "description",
+      content: "Découvrez si la margarine St Avé fait fondre vos coeurs!",
     },
-    { property: "og:url", content: "https://quizzstave.netlify.app/" },
+
+    // Facebook/OpenGraph
     { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary_large_image" },
+    { property: "og:url", content: "https://quizzstave.netlify.app" },
+    { property: "og:title", content: "Quiz Saint-Valentin 2024" },
     {
       property: "og:description",
       content: "Découvrez si la margarine St Avé fait fondre vos coeurs!",
     },
     {
-      name: "description",
-      content: "Quiz Saint-Valentin avec de nombreux lots à gagner",
+      property: "og:image",
+      content: "https://quizzstave.netlify.app/images/miniature.jpg",
+    },
+
+    // Twitter
+    { name: "twitter:card", content: "summary_large_image" },
+    { property: "twitter:domain", content: "quizzstave.netlify.app" },
+    { property: "twitter:url", content: "https://quizzstave.netlify.app" },
+    { name: "twitter:title", content: "Quiz Saint-Valentin 2024" },
+    {
+      name: "twitter:description",
+      content: "Découvrez si la margarine St Avé fait fondre vos coeurs!",
+    },
+    {
+      name: "twitter:image",
+      content: "https://quizzstave.netlify.app/images/miniature.jpg",
     },
   ],
 });
