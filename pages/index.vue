@@ -35,27 +35,15 @@
     <v-container
       class="d-flex align-center justify-center flex-column text-center"
     >
-      <div
-        class="d-flex align-center justify-center flex-column text-center"
-        style="
-          border-radius: 100%;
-          height: 400px;
-          width: 400px;
-          overflow: hidden;
-          border: 10px solid white;
-          box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
-        "
-      >
-        <img
-          src="/images/2.jpg"
-          alt="deco"
-          height="250"
-          style="object-fit: cover; width: 100%; height: 100%"
-        />
-      </div>
-      <h1 class="romantic-title mb-6">Quiz Saint-Valentin</h1>
+      <img
+        src="/images/logoTagline.png"
+        alt="deco"
+        height="250"
+        style="object-fit: contain; width: 100%; height: 100%"
+      />
 
       <v-btn
+        id="moudd"
         color="primary"
         size="x-large"
         :disabled="isAfterDeadline"

@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar color="primary" class="px-3">
       <v-app-bar-title class="text-white">
-        <img src="/images/logo.png" alt="Logo" height="160" />
+        <img src="/images/logo.png" alt="Logo" height="54" class="nkeup" />
         {{ appTitle }}
       </v-app-bar-title>
       <v-spacer></v-spacer>
@@ -37,11 +37,15 @@
   </v-app>
 </template>
 
-<style>
+<style lang="scss">
+$primary   : #FF0000ff;
+$secondary : #F3EA63ff;
+$background:#E54E38ff;
+
 :root {
-  --font-title: "Great Vibes", cursive;
-  --font-subtitle: "Parisienne", cursive;
-  --font-body: "Quicksand", sans-serif;
+  --font-title: 'Shadows Into Light', cursive;
+  --font-subtitle: : 'Shadows Into Light', cursive;
+  --font-body: 'Open Sans', sans-serif;
 }
 
 .v-application {
@@ -51,7 +55,7 @@
 .romantic-title {
   font-family: var(--font-title);
   font-size: 3rem;
-  color: #ff0000;
+  color: $secondary;
 }
 
 .romantic-subtitle {
@@ -99,7 +103,7 @@
   border-radius: 25px;
 }
 .v-application {
-  background: url(/images/bg.jpg) !important;
+  background: url(/images/backgoround.webp) !important;
   background-size: cover !important;
 }
 .v-footer {

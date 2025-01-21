@@ -1,3 +1,7 @@
+$primary   : #FF0000ff;
+$secondary : #F3EA63ff;
+$background:#E54E38ff;
+
 .container {
     max-width: 960px;
     margin   : 0 auto;
@@ -18,6 +22,18 @@ footer {
     background: #f3ea63 !important;
 }
 
+.nkeup {
+    height: 54px;
+}
+
+#moudd {
+    background : $primary !important;
+    font-family: 'Shadows Into Light', cursive !important;
+
+    &:hover {
+        background: $secondary !important;
+    }
+}
 
 .goodwife {
     height         : 100vh !important;
@@ -25,9 +41,4 @@ footer {
     align-items    : center;
     justify-content: center;
     flex-direction : column;
-}
-
-.valentine-background {
-
-    background: #ffffff6e !important;
 }
