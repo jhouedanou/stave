@@ -48,11 +48,22 @@
 </template>
 
 <script setup>
+definePageMeta({
+  middleware: "quizz-class",
+});
+
 const config = useRuntimeConfig();
 const minScoreEligible = config.public.minScoreEligible;
 const totalScore = useState("totalScore");
 const topScores = ref([]);
 
+onMounted(() => {
+  document.body.classList.add("zeresultat");
+});
+
+onBeforeUnmount(() => {
+  document.body.classList.remove("zeresultat");
+});
 onMounted(async () => {
   topScores.value = await useTopScores();
 });

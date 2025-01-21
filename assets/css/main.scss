@@ -29,9 +29,11 @@ footer {
 #moudd {
     background : $primary !important;
     font-family: 'Shadows Into Light', cursive !important;
+    font-weight: bold !important;
 
     &:hover {
         background: $secondary !important;
+        color     : $primary !important;
     }
 }
 
@@ -41,4 +43,45 @@ footer {
     align-items    : center;
     justify-content: center;
     flex-direction : column;
+}
+
+body.zeresultat,
+body.zeindex {
+    .v-application {
+        background        : url(/images/backgoround.webp);
+        background-size   : cover;
+        backround-position: center center;
+    }
+}
+
+body.zeresultat {
+    .romantic-subtitle {
+        font-family: var(--font-subtitle);
+        font-weight: 800;
+        font-size  : 1.2rem;
+        color      : #ff0000;
+    }
+}
+
+body.zequestion {
+    background     : url('/images/textureBg.jpg');
+    background-size: contain !important;
+
+    .v-application {
+        background         : url('/images/fondQuestion.webp');
+        background-size    : contain !important;
+        background-repeat  : no-repeat !important;
+        background-position: center center !important;
+
+    }
+}
+
+.boujto {
+    height: 150px;
+}
+
+.v-selection-control .v-label {
+    font-family: 'Shadows Into Light', cursive;
+    font-size  : 1.82rem;
+
 }

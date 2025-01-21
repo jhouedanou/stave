@@ -31,8 +31,10 @@ const openRules = () => {
   <v-app>
     <v-app-bar color="primary" class="px-3">
       <v-app-bar-title class="text-white">
-        <img src="/images/logo.webp" alt="Logo" height="54" class="nkeup" />
-        {{ appTitle }}
+        <nuxt-link to="/" class="text-decoration-none">
+          <img src="/images/logo.png" alt="Logo" height="54" class="nkeup" />
+          {{ appTitle }}
+        </nuxt-link>
       </v-app-bar-title>
       <v-spacer></v-spacer>
       <v-btn color="white" variant="text" @click="openRules"> Règlement </v-btn>
@@ -80,6 +82,9 @@ $background:#E54E38ff;
 }
 
 .v-application {
+    background        : url(/images/backgoround.webp);
+    background-size   : cover;
+    backround-position: center center;
   font-family: var(--font-body) !important;
 }
 
@@ -133,10 +138,7 @@ $background:#E54E38ff;
   text-transform: none;
   border-radius: 25px;
 }
-.v-application {
-  background: url(/images/backgoround.webp) !important;
-  background-size: cover !important;
-}
+
 .v-footer {
   background: none !important;
   position: fixed !important;

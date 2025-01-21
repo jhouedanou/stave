@@ -3,6 +3,7 @@
     <section class="text-center">
       <div v-if="!isQuizCompleted">
         <v-card class="pa-6 quiz-card" elevation="4">
+          <img src="/images/logo.png" class="boujto" alt="" />
           <h2 class="romantic-title mb-4">
             Question {{ currentQuestionIndex + 1 }}/{{ questions.length }}
           </h2>
@@ -169,23 +170,32 @@ const submitFinalScore = async () => {
   }
 };
 
+onMounted(() => {
+  document.body.classList.add("zequestion");
+});
+
 onBeforeUnmount(() => {
   clearInterval(timerInterval);
+  document.body.classList.remove("zequestion");
 });
 </script>
 
 <style scoped>
 .romantic-title {
   font-family: var(--font-title);
-  font-size: 2.5rem;
-  color: #ff0000;
+  font-size: 1.5rem;
+  background-color: #ff0000;
+  color: white;
+  padding: 2px;
   margin-bottom: 1rem;
+  display: inline-flex;
 }
 
 .romantic-subtitle {
   font-family: var(--font-subtitle);
-  font-size: 1.8rem;
-  color: #ff8fb1;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #ff0000;
 }
 
 .romantic-button {
@@ -204,7 +214,13 @@ onBeforeUnmount(() => {
 
 .quiz-card {
   border-radius: 20px;
-  background: linear-gradient(145deg, #ffffff, #fff0f3);
+  background: linear-gradient(145deg, #ffffff, #fff0f38d);
   box-shadow: 0 8px 20px rgba(255, 105, 180, 0.1) !important;
+  max-width: 450px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 </style>

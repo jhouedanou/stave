@@ -4,16 +4,31 @@
       <div class="loading-hearts">
         <div v-for="n in 10" :key="n" class="loading-heart">❤</div>
       </div>
-      <img src="/images/logo.webp" alt="Logo" height="54" class="nkeupbi" />
-
+      <img src="/images/logo.png" alt="Logo" height="54" class="nkeupbi" />
       <p class="loading-text">Chargement...</p>
     </div>
 
+    <v-dialog v-model="showGameEndedDialog" persistent max-width="400">
+      <v-card>
+        <v-card-title class="romantic-subtitle">Jeu Terminé</v-card-title>
+        <v-card-text>
+          <p>Le nombre maximum de gagnants a été atteint.</p>
+          <p>Merci de votre intérêt !</p>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="showGameEndedDialog = false"
+            >Fermer</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-dialog v-model="showCompletionDialog" max-width="400">
       <v-card>
-        <v-card-title class="romantic-subtitle">
-          Participation enregistrée
-        </v-card-title>
+        <v-card-title class="romantic-subtitle"
+          >Participation enregistrée</v-card-title
+        >
         <v-card-text>
           <p>Email: {{ userEmail }}</p>
           <p>Nom: {{ userName }}</p>
@@ -21,9 +36,9 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="showCompletionDialog = false">
-            Fermer
-          </v-btn>
+          <v-btn color="primary" @click="showCompletionDialog = false"
+            >Fermer</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -42,25 +57,23 @@
         id="moudd"
         color="primary"
         size="x-large"
-        :disabled="isAfterDeadline"
+        :disabled="isGameEnded || isAfterDeadline"
         @click="showRegistrationDialog = true"
         class="px-8 py-3"
       >
         <v-icon left>mdi-heart</v-icon>
-        Commencer le Quiz
+        {{ isGameEnded ? "Jeu Terminé" : "Commencer le Quiz" }}
       </v-btn>
 
       <v-dialog v-model="showRegistrationDialog" persistent max-width="500">
         <v-card>
-          <v-card-title class="romantic-subtitle">
-            Inscription au Quiz
-          </v-card-title>
-
+          <v-card-title class="romantic-subtitle"
+            >Inscription au Quiz</v-card-title
+          >
           <v-card-text>
             <v-alert v-if="errorMessage" type="error" class="mb-4" closable>
               {{ errorMessage }}
             </v-alert>
-
             <v-form
               ref="form"
               v-model="isFormValid"
@@ -73,7 +86,6 @@
                 required
                 variant="outlined"
               ></v-text-field>
-
               <v-text-field
                 v-model="participant.email"
                 label="Votre email"
@@ -84,7 +96,6 @@
               ></v-text-field>
             </v-form>
           </v-card-text>
-
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="startQuiz" :disabled="!isFormValid">
@@ -100,10 +111,14 @@
 <script setup>
 const config = useRuntimeConfig();
 const router = useRouter();
+const supabase = useSupabaseClient();
+
 const isLoading = ref(true);
 const showCompletionDialog = ref(false);
+const showGameEndedDialog = ref(false);
 const userEmail = ref("");
 const userName = ref("");
+const isGameEnded = ref(false);
 
 const showRegistrationDialog = ref(false);
 const isFormValid = ref(false);
@@ -130,18 +145,38 @@ const isAfterDeadline = computed(() => {
   return new Date() > deadline;
 });
 
+async function checkWinnerCount() {
+  const { data, error } = await supabase
+    .from("participants")
+    .select("score")
+    .gte("score", 10);
+
+  if (error) {
+    console.error("Erreur lors de la vérification des gagnants:", error);
+    return false;
+  }
+
+  return data.length >= 10;
+}
+
 async function startQuiz() {
   if (!isFormValid.value) return;
   errorMessage.value = "";
 
   try {
-    const { data, error } = await useSupabaseClient()
-      .from("participants")
-      .insert({
-        name: participant.value.name,
-        email: participant.value.email,
-        started_at: new Date().toISOString(),
-      });
+    const isMaxWinnersReached = await checkWinnerCount();
+    if (isMaxWinnersReached) {
+      isGameEnded.value = true;
+      showGameEndedDialog.value = true;
+      showRegistrationDialog.value = false;
+      return;
+    }
+
+    const { data, error } = await supabase.from("participants").insert({
+      name: participant.value.name,
+      email: participant.value.email,
+      started_at: new Date().toISOString(),
+    });
 
     if (error) {
       if (error.code === "23505") {
@@ -160,22 +195,36 @@ async function startQuiz() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  isGameEnded.value = await checkWinnerCount();
+
   setTimeout(() => {
     isLoading.value = false;
   }, 2000);
 
   const quizCompleted = useCookie("quiz-completed").value;
-
   if (quizCompleted === "true") {
     userEmail.value = useCookie("email").value;
     userName.value = useCookie("username").value;
     showCompletionDialog.value = true;
   }
 });
+
+onMounted(() => {
+  document.body.classList.add("zeindex");
+});
+
+onBeforeUnmount(() => {
+  document.body.classList.remove("zeindex");
+});
 </script>
 
 <style lang="scss" scoped>
+.v-application {
+  background: url(/images/backgoround.webp) !important;
+  background-size: cover !important;
+  backround-position: center center !important;
+}
 .loading-screen {
   position: fixed;
   top: 0;
