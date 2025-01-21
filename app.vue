@@ -3,10 +3,7 @@ useHead({
   title: "le Quiz de L'AMOUR ",
   meta: [
     { property: "og:title", content: "Quiz Saint-Valentin 2024" },
-    {
-      property: "og:description",
-      content: "Découvrez si la margarine St Avé fait fondre vos coeurs!",
-    },
+
     {
       property: "og:image",
       content: "https://quizzstave.netlify.app/images/miniature.jpg",
@@ -14,6 +11,10 @@ useHead({
     { property: "og:url", content: "https://quizzstave.netlify.app/" },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
+    {
+      property: "og:description",
+      content: "Découvrez si la margarine St Avé fait fondre vos coeurs!",
+    },
     {
       name: "description",
       content: "Quiz Saint-Valentin avec de nombreux lots à gagner",
