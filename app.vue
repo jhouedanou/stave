@@ -115,6 +115,7 @@ $background:#E54E38ff;
 }
 
 .valentine-background {
+  z-index:0;
   background-image: linear-gradient(
     45deg,
     #fff0f3 25%,
