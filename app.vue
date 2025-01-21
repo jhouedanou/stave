@@ -113,13 +113,12 @@
 
 <script setup>
 useHead({
-  title: "Quiz Saint-Valentin",
+  title: "le Quiz de L'AMOUR ",
   meta: [
     { property: "og:title", content: "Quiz Saint-Valentin 2024" },
     {
       property: "og:description",
-      content:
-        "Participez à notre quiz spécial Saint-Valentin et tentez de gagner de superbes cadeaux !",
+      content: "Découvrez si la margarine St Avé fait fondre vos coeurs!",
     },
     {
       property: "og:image",
