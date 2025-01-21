@@ -223,7 +223,7 @@ onBeforeUnmount(() => {
 .v-application {
   background: url(/images/backgoround.webp) !important;
   background-size: cover !important;
-  backround-position: center center !important;
+  background-position: center center !important;
 }
 .loading-screen {
   position: fixed;

@@ -100,7 +100,7 @@ $background:#E54E38ff;
 .v-application {
     background        : url(/images/backgoround.webp);
     background-size   : cover;
-    backround-position: center center;
+    background-position: center center;
   font-family: var(--font-body) !important;
 }
 
