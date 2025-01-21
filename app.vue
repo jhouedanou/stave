@@ -121,8 +121,11 @@ useHead({
       content:
         "Participez à notre quiz spécial Saint-Valentin et tentez de gagner de superbes cadeaux !",
     },
-    { property: "og:image", content: "/images/miniature.jpg" },
-    { property: "og:url", content: "https://votre-url.com" },
+    {
+      property: "og:image",
+      content: "https://quizzstave.netlify.app/images/miniature.jpg",
+    },
+    { property: "og:url", content: "https://quizzstave.netlify.app/" },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
     {
