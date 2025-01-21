@@ -1,8 +1,37 @@
+<script setup>
+useHead({
+  title: "le Quiz de L'AMOUR ",
+  meta: [
+    { property: "og:title", content: "Quiz Saint-Valentin 2024" },
+    {
+      property: "og:description",
+      content: "Découvrez si la margarine St Avé fait fondre vos coeurs!",
+    },
+    {
+      property: "og:image",
+      content: "https://quizzstave.netlify.app/images/miniature.jpg",
+    },
+    { property: "og:url", content: "https://quizzstave.netlify.app/" },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+    {
+      name: "description",
+      content: "Quiz Saint-Valentin avec de nombreux lots à gagner",
+    },
+  ],
+});
+
+const showRules = ref(false);
+const openRules = () => {
+  showRules.value = true;
+};
+</script>
+
 <template>
   <v-app>
     <v-app-bar color="primary" class="px-3">
       <v-app-bar-title class="text-white">
-        <img src="/images/logo.png" alt="Logo" height="54" class="nkeup" />
+        <img src="/images/logo.webp" alt="Logo" height="54" class="nkeup" />
         {{ appTitle }}
       </v-app-bar-title>
       <v-spacer></v-spacer>
@@ -10,6 +39,8 @@
     </v-app-bar>
 
     <v-main class="valentine-background">
+      <div v-for="n in 20" :key="n" class="heart">❤</div>
+
       <v-container class="goodwife">
         <NuxtPage />
 
@@ -113,33 +144,37 @@ $background:#E54E38ff;
   padding: 1em auto !important;
   border-top: 2px solid rgba(255, 29, 142, 0.1);
 }
+
+.valentine-background {
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes heartFall {
+  0% {
+    transform: translateY(-10%) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.heart {
+  position: fixed;
+  color: white;
+  font-size: 20px;
+  z-index: 1;
+  animation: heartFall 10s linear infinite;
+}
+
+@for $i from 1 through 20 {
+  .heart:nth-child(#{$i}) {
+    left: #{random(100)}vw;
+    opacity: #{random(100) / 100};
+    animation-delay: #{random(10)}s;
+    font-size: #{random(10) + 15}px;
+  }
+}
 </style>
-
-<script setup>
-useHead({
-  title: "le Quiz de L'AMOUR ",
-  meta: [
-    { property: "og:title", content: "Quiz Saint-Valentin 2024" },
-    {
-      property: "og:description",
-      content: "Découvrez si la margarine St Avé fait fondre vos coeurs!",
-    },
-    {
-      property: "og:image",
-      content: "https://quizzstave.netlify.app/images/miniature.jpg",
-    },
-    { property: "og:url", content: "https://quizzstave.netlify.app/" },
-    { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary_large_image" },
-    {
-      name: "description",
-      content: "Quiz Saint-Valentin avec de nombreux lots à gagner",
-    },
-  ],
-});
-
-const showRules = ref(false);
-const openRules = () => {
-  showRules.value = true;
-};
-</script>
