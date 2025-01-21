@@ -12,6 +12,7 @@
   "dependencies": {
     "@invictus.codes/nuxt-vuetify": "^0.3.0",
     "@mdi/font": "^7.4.47",
+    "@nuxt/image": "^1.9.0",
     "@nuxtjs/supabase": "^1.4.6",
     "nuxt": "^3.15.2",
     "vue": "latest",

@@ -1,5 +1,6 @@
 export default defineNuxtConfig({
-  modules: ["@nuxtjs/supabase", "@invictus.codes/nuxt-vuetify"],
+  modules: ["@nuxtjs/supabase", "@invictus.codes/nuxt-vuetify", "@nuxt/image"],
+
   app: {
     head: {
       link: [
@@ -10,6 +11,7 @@ export default defineNuxtConfig({
       ],
     },
   },
+
   vuetify: {
     moduleOptions: {
       treeshaking: true,
@@ -24,10 +26,9 @@ export default defineNuxtConfig({
           valentineTheme: {
             dark: false,
             colors: {
-              primary: "#FF1D8E",
-              secondary: "#FF8FB1",
-              accent: "#E91E63",
-              background: "#FFF0F3",
+              primary: "#FF0000ff",
+              secondary: "#E54E38ff",
+              background: "#F3EA63ff",
               error: "#FF5252",
               info: "#B39DDB",
               success: "#FF4081",
@@ -54,4 +55,5 @@ export default defineNuxtConfig({
   },
 
   css: ["~/assets/css/main.scss"],
+  compatibilityDate: "2025-01-21",
 });

@@ -25,7 +25,11 @@
             :type="isCorrectAnswer ? 'success' : 'error'"
             class="mb-4"
           >
-            {{ isCorrectAnswer ? '✨ Bravo ! Bonne réponse !' : '❌ Dommage, ce n\'était pas la bonne réponse.' }}
+            {{
+              isCorrectAnswer
+                ? "✨ Bravo ! Bonne réponse !"
+                : "❌ Dommage, ce n'était pas la bonne réponse."
+            }}
           </v-alert>
 
           <v-btn
@@ -42,57 +46,14 @@
           </v-btn>
         </v-card>
       </div>
-
-      <div v-else>
-        <v-card class="pa-6 result-card" elevation="4">
-          <h2 class="romantic-title">Quiz terminé !</h2>
-          <p class="romantic-subtitle mb-4">
-            Votre score : {{ totalScore }}/13 points
-          </p>
-
-          <div v-if="totalScore >= minScoreEligible">
-            <v-alert type="success" variant="tonal" class="mb-4">
-              Félicitations ! Vous êtes éligible au tirage au sort.
-            </v-alert>
-          </div>
-          <div v-else>
-            <v-alert type="error" variant="tonal">
-              Désolé, vous devez obtenir au moins {{ minScoreEligible }} points
-              pour être éligible au tirage au sort.
-            </v-alert>
-          </div>
-        </v-card>
-
-        <v-card class="mt-6 scores-card" elevation="4">
-          <v-card-title class="romantic-title">Top 10 des meilleurs scores</v-card-title>
-          <v-table>
-            <thead>
-              <tr>
-                <th class="text-center">Position</th>
-                <th>Nom</th>
-                <th class="text-center">Score</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(score, index) in topScores" :key="index">
-                <td class="text-center">{{ index + 1 }}</td>
-                <td>{{ score.name }}</td>
-                <td class="text-center">{{ score.score }}/13</td>
-              </tr>
-            </tbody>
-          </v-table>
-        </v-card>
-      </div>
     </section>
   </v-container>
 </template>
 
 <script setup>
 import { questions, useTopScores } from "~/composables/useQuestions";
-import { useCookie } from '#app';
 
 const supabase = useSupabaseClient();
-const config = useRuntimeConfig();
 const router = useRouter();
 
 const currentQuestionIndex = ref(0);
@@ -100,44 +61,37 @@ const selectedAnswer = ref(null);
 const answerSubmitted = ref(false);
 const totalScore = ref(0);
 const isQuizCompleted = ref(false);
-const topScores = ref([]);
 const isCorrectAnswer = ref(false);
-const userEmail = useState('participantEmail');
+const userEmail = useState("participantEmail");
 
-const minScoreEligible = config.public.minScoreEligible;
-
-const currentQuestion = computed(() => questions[currentQuestionIndex.value] || null);
-
-onMounted(async () => {
-  const quizCookie = useCookie('quiz-completed');
-  
-  if (quizCookie.value) {
-    router.push('/');
-    return;
-  }
-  
-  topScores.value = await useTopScores();
-});
+const currentQuestion = computed(
+  () => questions[currentQuestionIndex.value] || null
+);
 
 const getOptionText = (option) => {
   switch (option) {
-    case "A": return currentQuestion.value.option_a;
-    case "B": return currentQuestion.value.option_b;
-    case "C": return currentQuestion.value.option_c;
-    default: return "";
+    case "A":
+      return currentQuestion.value.option_a;
+    case "B":
+      return currentQuestion.value.option_b;
+    case "C":
+      return currentQuestion.value.option_c;
+    default:
+      return "";
   }
 };
 
 const getAnswerColor = (option) => {
-  if (!answerSubmitted.value) return 'primary';
-  if (option === currentQuestion.value.correct_answer) return 'success';
-  if (option === selectedAnswer.value) return 'error';
-  return 'primary';
+  if (!answerSubmitted.value) return "primary";
+  if (option === currentQuestion.value.correct_answer) return "success";
+  if (option === selectedAnswer.value) return "error";
+  return "primary";
 };
 
 const submitAnswer = () => {
   if (!answerSubmitted.value) {
-    isCorrectAnswer.value = selectedAnswer.value === currentQuestion.value.correct_answer;
+    isCorrectAnswer.value =
+      selectedAnswer.value === currentQuestion.value.correct_answer;
     if (isCorrectAnswer.value) {
       totalScore.value += currentQuestion.value.points;
       console.log("🎯 Bonne réponse! Score actuel:", totalScore.value);
@@ -154,40 +108,27 @@ const submitAnswer = () => {
     selectedAnswer.value = null;
     answerSubmitted.value = false;
     isCorrectAnswer.value = false;
-
-    if (currentQuestionIndex.value >= questions.length) {
-      isQuizCompleted.value = true;
-    }
   }
 };
 
 const submitFinalScore = async () => {
   try {
-    console.log('Email utilisateur:', userEmail.value);
-    console.log('Score final:', totalScore.value);
-
     const { data, error } = await supabase
-      .from('participants')
+      .from("participants")
       .update({
         score: totalScore.value,
-        completed_at: new Date().toISOString()
+        completed_at: new Date().toISOString(),
       })
-      .eq('email', userEmail.value)
+      .eq("email", userEmail.value)
       .select();
 
     if (error) throw error;
-
-    console.log('Score enregistré avec succès:', data);
     
-    const quizCookie = useCookie('quiz-completed', {
-      maxAge: 60 * 60 * 24 * 7
-    });
-    quizCookie.value = 'true';
-
-    topScores.value = await useTopScores();
+    useState('totalScore').value = totalScore.value;
+    await navigateTo('/resultats');
     
   } catch (err) {
-    console.error('Erreur lors de l\'enregistrement:', err);
+    console.error("Erreur lors de l'enregistrement:", err);
   }
 };
 </script>
@@ -196,7 +137,7 @@ const submitFinalScore = async () => {
 .romantic-title {
   font-family: var(--font-title);
   font-size: 2.5rem;
-  color: #ff1d8e;
+  color: #ff0000;
   margin-bottom: 1rem;
 }
 
@@ -207,7 +148,7 @@ const submitFinalScore = async () => {
 }
 
 .romantic-button {
-  background: linear-gradient(45deg, #ff1d8e, #ff69b4) !important;
+  background: linear-gradient(45deg, #ff0000, #ff69b4) !important;
   font-size: 1.2rem;
   font-family: var(--font-subtitle);
   text-transform: none;
@@ -220,34 +161,9 @@ const submitFinalScore = async () => {
   box-shadow: 0 6px 15px rgba(255, 29, 142, 0.3) !important;
 }
 
-.quiz-card,
-.result-card,
-.scores-card {
+.quiz-card {
   border-radius: 20px;
   background: linear-gradient(145deg, #ffffff, #fff0f3);
   box-shadow: 0 8px 20px rgba(255, 105, 180, 0.1) !important;
-}
-
-.v-table {
-  background: transparent !important;
-}
-
-.v-table th {
-  color: #ff1d8e !important;
-  font-family: var(--font-subtitle);
-  font-size: 1.2rem;
-}
-
-.v-table td {
-  font-family: var(--font-body);
-  color: #666;
-}
-
-.v-radio.success .v-label {
-  color: #4CAF50 !important;
-}
-
-.v-radio.error .v-label {
-  color: #FF5252 !important;
 }
 </style>

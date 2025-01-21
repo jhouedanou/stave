@@ -2,26 +2,38 @@
   <v-app>
     <v-app-bar color="primary" class="px-3">
       <v-app-bar-title class="text-white">
-        <v-icon icon="mdi-heart" class="mr-2"></v-icon>
+        <img src="/images/logo.png" alt="Logo" height="160" />
         {{ appTitle }}
       </v-app-bar-title>
       <v-spacer></v-spacer>
-      <v-btn color="white" variant="text" @click="showRules"> Règlement </v-btn>
+      <v-btn color="white" variant="text" @click="openRules"> Règlement </v-btn>
     </v-app-bar>
 
     <v-main class="valentine-background">
-      <v-container>
+      <v-container class="goodwife">
         <NuxtPage />
+
+        <v-dialog v-model="showRules" max-width="600">
+          <v-card>
+            <v-card-title>Règlement du Quiz</v-card-title>
+            <v-card-text>
+              <QuizRules />
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="primary" @click="showRules = false">Fermer</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-container>
     </v-main>
 
-    <v-footer class="text-center d-flex flex-column">
+    <!-- <v-footer class="text-center d-flex flex-column">
       <div>
         <v-icon icon="mdi-heart" color="primary" class="mr-2"></v-icon>
         Quiz Saint-Valentin - Saint-Avé
       </div>
       <div class="mt-2">Participation jusqu'au {{ formatDeadline }}</div>
-    </v-footer>
+    </v-footer> -->
   </v-app>
 </template>
 
@@ -39,7 +51,7 @@
 .romantic-title {
   font-family: var(--font-title);
   font-size: 3rem;
-  color: #ff1d8e;
+  color: #ff0000;
 }
 
 .romantic-subtitle {
@@ -86,9 +98,15 @@
   text-transform: none;
   border-radius: 25px;
 }
-
+.v-application {
+  background: url(images/bg.jpg) !important;
+  background-size: cover !important;
+}
 .v-footer {
-  background-color: #fff0f3 !important;
+  background: none !important;
+  position: fixed !important;
+  z-index: 10 !important;
+  padding: 1em auto !important;
   border-top: 2px solid rgba(255, 29, 142, 0.1);
 }
 </style>
@@ -113,4 +131,9 @@ useHead({
     },
   ],
 });
+
+const showRules = ref(false);
+const openRules = () => {
+  showRules.value = true;
+};
 </script>

@@ -12,7 +12,47 @@
       </div>
       <p class="loading-text">Chargement...</p>
     </div>
-    <v-container class="text-center">
+
+    <v-dialog v-model="showCompletionDialog" max-width="400">
+      <v-card>
+        <v-card-title class="romantic-subtitle">
+          Participation enregistrée
+        </v-card-title>
+        <v-card-text>
+          <p>Email: {{ userEmail }}</p>
+          <p>Nom: {{ userName }}</p>
+          <p class="mt-4">Merci pour votre participation !</p>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="showCompletionDialog = false">
+            Fermer
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-container
+      class="d-flex align-center justify-center flex-column text-center"
+    >
+      <div
+        class="d-flex align-center justify-center flex-column text-center"
+        style="
+          border-radius: 100%;
+          height: 400px;
+          width: 400px;
+          overflow: hidden;
+          border: 10px solid white;
+          box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        "
+      >
+        <img
+          src="/images/2.jpg"
+          alt="deco"
+          height="250"
+          style="object-fit: cover; width: 100%; height: 100%"
+        />
+      </div>
       <h1 class="romantic-title mb-6">Quiz Saint-Valentin</h1>
 
       <v-btn
@@ -77,6 +117,9 @@
 const config = useRuntimeConfig();
 const router = useRouter();
 const isLoading = ref(true);
+const showCompletionDialog = ref(false);
+const userEmail = ref("");
+const userName = ref("");
 
 const showRegistrationDialog = ref(false);
 const isFormValid = ref(false);
@@ -136,6 +179,14 @@ onMounted(() => {
   setTimeout(() => {
     isLoading.value = false;
   }, 2000);
+
+  const quizCompleted = useCookie("quiz-completed").value;
+
+  if (quizCompleted === "true") {
+    userEmail.value = useCookie("email").value;
+    userName.value = useCookie("username").value;
+    showCompletionDialog.value = true;
+  }
 });
 </script>
 
@@ -146,7 +197,7 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(45deg, #ffe6f0, #fff0f5);
+  background: linear-gradient(45deg, #f3ea63, #ffef12);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -167,7 +218,7 @@ onMounted(() => {
 .loading-text {
   margin-top: 20px;
   font-family: var(--font-subtitle);
-  color: #ff1d8e;
+  color: #ff0000;
   font-size: 1.5rem;
 }
 
