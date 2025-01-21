@@ -32,6 +32,19 @@
             }}
           </v-alert>
 
+          <v-alert v-if="answerSubmitted" type="info" class="mb-4">
+            <div class="text-center">
+              <p class="mb-2">Prochaine question dans {{ timer }} secondes</p>
+              <v-progress-linear
+                v-model="progressValue"
+                color="primary"
+                height="10"
+                rounded
+                striped
+              ></v-progress-linear>
+            </div>
+          </v-alert>
+
           <v-btn
             color="primary"
             size="x-large"
@@ -63,6 +76,9 @@ const totalScore = ref(0);
 const isQuizCompleted = ref(false);
 const isCorrectAnswer = ref(false);
 const userEmail = useState("participantEmail");
+const timer = ref(5);
+const progressValue = ref(100);
+let timerInterval = null;
 
 const currentQuestion = computed(
   () => questions[currentQuestionIndex.value] || null
@@ -88,31 +104,49 @@ const getAnswerColor = (option) => {
   return "primary";
 };
 
+const nextQuestion = () => {
+  clearInterval(timerInterval);
+  currentQuestionIndex.value++;
+  selectedAnswer.value = null;
+  answerSubmitted.value = false;
+  isCorrectAnswer.value = false;
+};
+
 const submitAnswer = () => {
   if (!answerSubmitted.value) {
     isCorrectAnswer.value =
       selectedAnswer.value === currentQuestion.value.correct_answer;
     if (isCorrectAnswer.value) {
       totalScore.value += currentQuestion.value.points;
-      console.log("🎯 Bonne réponse! Score actuel:", totalScore.value);
-    } else {
-      console.log("❌ Mauvaise réponse. Score actuel:", totalScore.value);
     }
     answerSubmitted.value = true;
 
     if (currentQuestionIndex.value + 1 >= questions.length) {
       submitFinalScore();
+    } else {
+      timer.value = 5;
+      progressValue.value = 100;
+      timerInterval = setInterval(() => {
+        timer.value--;
+        progressValue.value = (timer.value / 5) * 100;
+        if (timer.value === 0) {
+          clearInterval(timerInterval);
+          nextQuestion();
+        }
+      }, 1000);
     }
   } else {
-    currentQuestionIndex.value++;
-    selectedAnswer.value = null;
-    answerSubmitted.value = false;
-    isCorrectAnswer.value = false;
+    nextQuestion();
   }
 };
 
 const submitFinalScore = async () => {
   try {
+    console.log("Début de l'enregistrement du score...");
+    console.log("Email:", userEmail.value);
+    console.log("Score:", totalScore.value);
+    console.log("Date:", new Date().toISOString());
+
     const { data, error } = await supabase
       .from("participants")
       .update({
@@ -120,17 +154,24 @@ const submitFinalScore = async () => {
         completed_at: new Date().toISOString(),
       })
       .eq("email", userEmail.value)
-      .select();
+      .select("*");
 
-    if (error) throw error;
-    
-    useState('totalScore').value = totalScore.value;
-    await navigateTo('/resultats');
-    
+    if (error) {
+      console.log("Erreur Supabase:", error);
+      throw error;
+    }
+
+    console.log("Données enregistrées:", data);
+    useState("totalScore").value = totalScore.value;
+    await navigateTo("/resultats");
   } catch (err) {
-    console.error("Erreur lors de l'enregistrement:", err);
+    console.error("Erreur complète:", err);
   }
 };
+
+onBeforeUnmount(() => {
+  clearInterval(timerInterval);
+});
 </script>
 
 <style scoped>
