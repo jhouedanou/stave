@@ -10,7 +10,9 @@
 
     <v-dialog v-model="showGameEndedDialog" persistent max-width="400">
       <v-card>
-        <v-card-title class="romantic-subtitle">Jeu Terminé</v-card-title>
+        <v-card-title class="romantic-subtitle"
+          >e nombre maximum de gagnants a été atteint.</v-card-title
+        >
         <v-card-text>
           <p>Le nombre maximum de gagnants a été atteint.</p>
           <p>Merci de votre intérêt !</p>
@@ -46,6 +48,7 @@
     <v-container
       class="d-flex align-center justify-center flex-column text-center"
     >
+      <img src="/images/logo.png" class="boujto mb-2" alt="" />
       <img
         src="/images/logoTagline.png"
         alt="deco"

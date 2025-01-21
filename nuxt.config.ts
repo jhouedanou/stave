@@ -1,6 +1,41 @@
 export default defineNuxtConfig({
-  modules: ["@nuxtjs/supabase", "@invictus.codes/nuxt-vuetify", "@nuxt/image"],
-
+  modules: [
+    "@nuxtjs/supabase",
+    "@invictus.codes/nuxt-vuetify",
+    "@nuxt/image",
+    "@vite-pwa/nuxt",
+  ],
+  pwa: {
+    manifest: {
+      name: 'Quiz Saint-Valentin 2024',
+      short_name: 'Quiz St-Valentin',
+      description: 'Découvrez si la margarine St Avé fait fondre vos coeurs!',
+      theme_color: '#FF0000',
+      background_color: '#ffffff',
+      display: 'standalone',
+      orientation: 'portrait',
+      icons: [
+        {
+          src: '/images/logo.png',
+          sizes: '192x192',
+          type: 'image/png'
+        },
+        {
+          src: '/images/logo.png',
+          sizes: '512x512',
+          type: 'image/png'
+        }
+      ]
+    },
+    workbox: {
+      navigateFallback: '/',
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}']
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module'
+    }
+  },
   app: {
     head: {
       link: [

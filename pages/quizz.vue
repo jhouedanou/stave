@@ -4,7 +4,7 @@
       <div v-if="!isQuizCompleted">
         <v-card class="pa-6 quiz-card" elevation="4">
           <img src="/images/logo.png" class="boujto" alt="" />
-          <h2 class="romantic-title mb-4">
+          <h2 class="romantic-title mt-4 mb-4">
             Question {{ currentQuestionIndex + 1 }}/{{ questions.length }}
           </h2>
           <p class="romantic-subtitle mb-6">{{ currentQuestion.question }}</p>

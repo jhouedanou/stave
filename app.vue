@@ -7,7 +7,6 @@ useHead({
       name: "description",
       content: "Découvrez si la margarine St Avé fait fondre vos coeurs!",
     },
-
     // Facebook/OpenGraph
     { property: "og:type", content: "website" },
     { property: "og:url", content: "https://quizzstave.netlify.app" },
@@ -34,7 +33,17 @@ useHead({
       name: "twitter:image",
       content: "https://quizzstave.netlify.app/images/miniature.jpg",
     },
+    //PWA
+    { name: "viewport", content: "width=device-width, initial-scale=1" },
+    { name: "theme-color", content: "#FF0000" },
+    { name: "apple-mobile-web-app-capable", content: "yes" },
+    {
+      name: "apple-mobile-web-app-status-bar-style",
+      content: "black-translucent",
+    },
+    { name: "apple-mobile-web-app-title", content: "Quiz St-Valentin" },
   ],
+  link: [{ rel: "apple-touch-icon", href: "https://quizzstave.netlify.app/images/logo.png" }],
 });
 
 const showRules = ref(false);
