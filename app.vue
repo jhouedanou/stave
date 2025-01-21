@@ -99,7 +99,7 @@
   border-radius: 25px;
 }
 .v-application {
-  background: url(images/bg.jpg) !important;
+  background: url(/images/bg.jpg) !important;
   background-size: cover !important;
 }
 .v-footer {
